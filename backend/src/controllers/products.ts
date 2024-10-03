@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import Product, { IProduct } from '../models/product';
 import ConflictError from '../errors/conflict-error';
 import BadRequestError from '../errors/bad-request-error';
-import { STATUS_CODES } from '../constants/statusCodes';
+import STATUS_CODES from '../constants/statusCodes';
 import ServerError from '../errors/server-error';
 
 export const getAllProducts = async (_req: Request, res: Response, next: NextFunction) => {

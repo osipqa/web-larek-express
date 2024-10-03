@@ -5,7 +5,7 @@ import Product from '../models/product';
 import { OrderRequest } from '../types/order';
 import BadRequestError from '../errors/bad-request-error';
 import NotFoundError from '../errors/not-found-error';
-import { STATUS_CODES } from '../constants/statusCodes';
+import STATUS_CODES from '../constants/statusCodes';
 
 const createOrder = async (
   req: Request<{}, {}, OrderRequest>,
@@ -29,10 +29,10 @@ const createOrder = async (
       return next(new NotFoundError(`Товары с id ${items.join(', ')} не найдены или не имеют цены`));
     }
 
-    const unValidProducts = await Product.find({ _id: { $in: items }, price: { $eq: null } }).lean();
+    const unValidProduct = await Product.find({ _id: { $in: items }, price: { $eq: null } }).lean();
 
-    if (unValidProducts.length > 0) {
-      const unItems = unValidProducts.map((product) => product._id.toString());
+    if (unValidProduct.length > 0) {
+      const unItems = unValidProduct.map((product) => product._id.toString());
       return next(new BadRequestError(`Товар с id ${unItems.join(', ')} не продается`));
     }
 
