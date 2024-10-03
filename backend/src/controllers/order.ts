@@ -1,19 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import Product from '../models/product';
 import { faker } from '@faker-js/faker';
+import { isValidObjectId } from 'mongoose';
+import Product from '../models/product';
 import { OrderRequest } from '../types/order';
 import BadRequestError from '../errors/bad-request-error';
 import NotFoundError from '../errors/not-found-error';
-import { isValidObjectId } from 'mongoose';
 
-export const createOrder = async (req: Request<{}, {}, OrderRequest>, res: Response, next: NextFunction) => {
-  const { payment, email, phone, address, total, items } = req.body;
+const createOrder = async (
+  req: Request<{}, {}, OrderRequest>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { total, items } = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
     return next(new BadRequestError('Массив items не должен быть пустым'));
   }
 
-  if (!items.every(item => isValidObjectId(item))) {
+  if (!items.every((item) => isValidObjectId(item))) {
     return next(new BadRequestError('Неверный id продукта'));
   }
 
@@ -23,10 +27,10 @@ export const createOrder = async (req: Request<{}, {}, OrderRequest>, res: Respo
       return next(new NotFoundError(`Товар с id ${items.join(', ')} не найден`));
     }
 
-    const validProducts = products.filter(product => product.price !== null);
+    const validProducts = products.filter((product) => product.price !== null);
     if (validProducts.length !== items.length) {
-      const unavailableItems = items.filter(item => !validProducts.some(product => product.id === item));
-      return next(new BadRequestError(`Товар с id ${unavailableItems.join(', ')} не продается`));
+      const unItems = items.filter((item) => !validProducts.some((product) => product.id === item));
+      return next(new BadRequestError(`Товар с id ${unItems.join(', ')} не продается`));
     }
 
     const calcTotal = validProducts.reduce((sum, product) => sum + (product.price || 0), 0);
@@ -35,8 +39,10 @@ export const createOrder = async (req: Request<{}, {}, OrderRequest>, res: Respo
     }
 
     const orderId = faker.string.uuid();
-    res.status(201).json({ id: orderId, total });
+    return res.status(201).json({ id: orderId, total });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
+
+export default createOrder;

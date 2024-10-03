@@ -1,10 +1,10 @@
+import path from 'path';
+import { Request, Response, ErrorRequestHandler } from 'express';
+import winston from 'winston';
+import expressWinston from 'express-winston';
 import BadRequestError from '../errors/bad-request-error';
 import ConflictError from '../errors/conflict-error';
 import NotFoundError from '../errors/not-found-error';
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
-import winston from 'winston';
-import expressWinston from 'express-winston';
-import path from 'path';
 
 export const requestLogger = expressWinston.logger({
   transports: [
@@ -20,8 +20,7 @@ export const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response) => {
-
+const errorHandler: ErrorRequestHandler = (err, _req: Request, res: Response) => {
   if (err instanceof BadRequestError) {
     return res.status(400).json({ message: err.message });
   }
@@ -35,7 +34,7 @@ const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response) => 
   }
 
   const { statusCode = 500, message } = err;
-  res.status(statusCode).json({
+  return res.status(statusCode).json({
     message: statusCode === 500 ? 'Ошибка сервера' : message,
   });
 };
