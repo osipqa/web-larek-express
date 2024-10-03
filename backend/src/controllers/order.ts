@@ -5,6 +5,7 @@ import Product from '../models/product';
 import { OrderRequest } from '../types/order';
 import BadRequestError from '../errors/bad-request-error';
 import NotFoundError from '../errors/not-found-error';
+import { STATUS_CODES } from '../constants/statusCodes';
 
 const createOrder = async (
   req: Request<{}, {}, OrderRequest>,
@@ -22,14 +23,16 @@ const createOrder = async (
   }
 
   try {
-    const products = await Product.find({ _id: { $in: items } });
-    if (products.length === 0) {
-      return next(new NotFoundError(`Товар с id ${items.join(', ')} не найден`));
+    const validProducts = await Product.find({ _id: { $in: items }, price: { $ne: null } }).lean();
+
+    if (validProducts.length === 0) {
+      return next(new NotFoundError(`Товары с id ${items.join(', ')} не найдены или не имеют цены`));
     }
 
-    const validProducts = products.filter((product) => product.price !== null);
-    if (validProducts.length !== items.length) {
-      const unItems = items.filter((item) => !validProducts.some((product) => product.id === item));
+    const unValidProducts = await Product.find({ _id: { $in: items }, price: { $eq: null } }).lean();
+
+    if (unValidProducts.length > 0) {
+      const unItems = unValidProducts.map((product) => product._id.toString());
       return next(new BadRequestError(`Товар с id ${unItems.join(', ')} не продается`));
     }
 
@@ -39,7 +42,7 @@ const createOrder = async (
     }
 
     const orderId = faker.string.uuid();
-    return res.status(201).json({ id: orderId, total });
+    return res.status(STATUS_CODES.CREATED).json({ id: orderId, total });
   } catch (err) {
     return next(err);
   }

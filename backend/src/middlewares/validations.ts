@@ -17,7 +17,7 @@ const orderSchema = Joi.object<IOrder>({
   phone: Joi.string().pattern(/^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/).required(),
   address: Joi.string().required(),
   total: Joi.number().required(),
-  items: Joi.array().required(),
+  items: Joi.array().items(Joi.string()).required(),
 });
 
 const productSchema = Joi.object<IProduct>({
