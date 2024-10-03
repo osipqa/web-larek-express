@@ -1,7 +1,7 @@
 {
   "name": "weblarek_backend",
   "version": "1.0.0",
-  "description": "< Добавьте описание проекта в свободной форме >",
+  "description": "weblarek backend",
   "main": "dist/app.js",
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
@@ -10,10 +10,11 @@
     "start": "ts-node src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "< Укажите здесь автора работы >",
+  "author": "osipQa",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/joi": "^17.2.3",
     "@types/node": "^20.12.7",
     "@types/validator": "^13.11.9",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
@@ -26,8 +27,16 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "mongoose": "^8.3.2",
-    "validator": "^13.11.0"
+    "@faker-js/faker": "^9.0.3",
+    "@types/cors": "^2.8.17",
+    "celebrate": "^15.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-winston": "^4.2.0",
+    "joi": "^17.13.3",
+    "mongoose": "^8.7.0",
+    "validator": "^13.11.0",
+    "winston": "^3.14.2"
   }
 }
