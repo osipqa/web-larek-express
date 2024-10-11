@@ -31,7 +31,7 @@ app.use(express.json());
 app.use('/product', productRoutes);
 app.use('/order', orderRoutes);
 
-// Логгирование ошибок + test
+// Логгирование ошибок
 app.use(errorLogger);
 
 // Обработчик ошибок
